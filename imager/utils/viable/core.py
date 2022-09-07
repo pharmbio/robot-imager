@@ -86,7 +86,8 @@ class Serve:
     # Routes
     routes: dict[str, Callable[..., Iterable[Node | str | dict[str, str]]]] = field(default_factory=dict)
 
-    _serializer: Serializer = field(default_factory=serializer_factory)
+    _saved: dict[str, bytes] = field(default_factory=dict)
+    _saved_rev: dict[bytes, str] = field(default_factory=dict)
 
     # State for reloading
     notify_reload_lock: RLock = field(default_factory=RLock)
@@ -110,20 +111,30 @@ class Serve:
         js_args_keys = [k for k, _ in js_args.items()]
         js_args_vals = [v for _, v in js_args.items()]
         func_and_py_args_and_js_args_keys = (func, py_args, js_args_keys)
-        enc = self._serializer.dumps(func_and_py_args_and_js_args_keys)
-        if isinstance(enc, bytes):
-            enc = enc.decode()
+        enc = pickle.dumps(func_and_py_args_and_js_args_keys)
+        name = ''
+        i = 0
+        while enc not in self._saved_rev:
+            name = f'{i}'
+            if name not in self._saved:
+                self._saved[name] = enc
+                self._saved_rev[enc] = name
+                break
+            i += 1
+        name = self._saved_rev[enc]
+        assert name
         call_args = ','.join([
-            json.dumps(enc),
+            name,
             *js_args_vals,
         ])
         return f'call({call_args})\n/* {f} {py_args} {js_args_keys} */'
 
-    def handle_call(self, enc: str, js_args_vals: list[Any]) -> Response:
+    def handle_call(self, name: str, js_args_vals: list[Any]) -> Response:
         func: FrozenFunction;
         py_args: dict[str | int, Any]
         js_args_keys: list[str | int]
-        func, py_args, js_args_keys = self._serializer.loads(enc)
+        enc = self._saved[str(name)]
+        func, py_args, js_args_keys = pickle.loads(enc)
         js_args = dict(zip(js_args_keys, js_args_vals))
         assert js_args.keys().isdisjoint(py_args.keys())
         arg_dict: dict[int, Any] = {}
