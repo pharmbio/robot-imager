@@ -48,7 +48,7 @@ class Select(Generic[R], PrivateReplaceMixin):
     _limit: int | None             = None
     _offset: int | None            = None
 
-    def where(self, *cond: bool):
+    def where(self, *cond: bool) -> Select[R]:
         return self._replace(_where=[*self._where, *cond]) # type: ignore
 
     def where_some(self, *cond: bool) -> Select[R]:
@@ -133,6 +133,12 @@ class Select(Generic[R], PrivateReplaceMixin):
 
     def __iter__(self):
         yield from self.list()
+
+    def __bool__(self):
+        for _ in self:
+            return True
+        else:
+            return False
 
 K = TypeVar('K')
 V = TypeVar('V')

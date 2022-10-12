@@ -213,6 +213,25 @@ class BarcodeReader(BarcodeReaderLike):
     def read_and_clear(self):
         return self.send('read_and_clear')
 
+def wip():
+    from labrobots import IMX, BarcodeReader, STX as Fridge
+
+    WINDOWS_GBG = 'http://10.10.0.97:5050'
+
+    @dataclass(frozen=True)
+    class Env:
+        imx: IMX
+        barcode_reader: BarcodeReader
+        fridge: Fridge
+
+        @staticmethod
+        def real():
+            return Env(
+                imx = IMX.remote(name='imx', host=WINDOWS_GBG),
+                barcode_reader = BarcodeReader.remote(name='barcode', host=WINDOWS_GBG),
+                fridge = Fridge.remote(name='fridge', host=WINDOWS_GBG),
+            )
+
 @dataclass(frozen=True)
 class Env:
     db: DB

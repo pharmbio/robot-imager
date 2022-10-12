@@ -72,7 +72,9 @@ def ensure_fridge(db: DB):
     with db.transaction:
         FridgeSlots = db.get(FridgeSlot)
         for loc in FRIDGE_LOCS:
+            # print('searching for loc', loc)
             if not FridgeSlots.where(FridgeSlot.loc == loc):
+                # print('adding', loc)
                 FridgeSlot(loc).save(db)
 
 from typing import Literal

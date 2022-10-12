@@ -3,6 +3,7 @@ from setuptools import setup
 requirements = '''
     flask
     apsw>=3.39.3
+    labrobots
 '''
 
 name='imager'

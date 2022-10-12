@@ -155,6 +155,38 @@ def test_image_one(params: list[str], hts_file: str, **_: Any):
     ]
     return cmds
 
+@add_to_cli
+def demo_h12_to_from_imx(**_: Any):
+    '''
+    Back and forth IMX and H12
+    '''
+    cmds: list[Command] = []
+    cmds += [
+        Open(),
+        RobotarmCmd('H12-to-imx', keep_imx_open=True),
+        Close(),
+        CheckpointCmd(f'x'),
+        WaitForCheckpoint('x', plus_secs=2.0),
+        CheckpointCmd(f'x'),
+        Open(),
+        RobotarmCmd('imx-to-H12', keep_imx_open=True),
+        Close(),
+    ]
+    return cmds
+
+@add_to_cli
+def demo_h12_to_from_fridge(**_: Any):
+    '''
+    Back and forth IMX and H12
+    '''
+    cmds: list[Command] = []
+    cmds += [
+        RobotarmCmd('H12-to-fridge'),
+        FridgePut('3x12', 'demo', 'demo-plate'),
+        FridgeGet('3x12', check_barcode=False),
+        RobotarmCmd('fridge-to-H12'),
+    ]
+    return cmds
 
 def load_fridge(project: str, num_plates: int):
     '''

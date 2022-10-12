@@ -29,7 +29,7 @@ import textwrap
 from pathlib import Path
 
 from . import protocols
-from .protocols import FromHotelTodo, FromFridgeTodo
+from .protocols import FromHotelTodo, FromFridgeTodo, demo_h12_to_from_fridge, demo_h12_to_from_imx
 
 import csv
 
@@ -866,6 +866,21 @@ def index_page(page: Var[str]):
                     )
                 ),
                 V.span('(resume by removing pause from queue)', opacity='0.85'),
+            ),
+            V.div(
+                V.span('Demo:'),
+                V.button(
+                    'imx',
+                    onclick=(
+                        call(enqueue, protocols.demo_h12_to_from_imx())
+                    )
+                ),
+                V.button(
+                    'fridge',
+                    onclick=(
+                        call(enqueue, protocols.demo_h12_to_from_fridge())
+                    )
+                ),
             )
         )
 
