@@ -1,3 +1,7 @@
+# robot-imager moved to [pharmbio/robotlab](https://github.com/pharmbio/robotlab)
+
+Repo moved to [pharmbio/robotlab](https://github.com/pharmbio/robotlab)
+
 # robot-imager
 
 Control of the PreciseFlex (PF) robotarm and the MolDev ImageXpress (IMX) microscope.
